@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNC Stage Map — Star Mountain Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:#1a2b4a; --gold:#c9a84c; --gold-dim:#f5edd8; --gold-text:#7a5e1a;
+  --white:#ffffff; --bg:#f9f8f6; --rule:#e2ddd5; --rule-lt:#ede9e2;
+  --text:#1a2b4a; --text-mid:#4a5568; --text-dim:#8a96a8;
+  --green:#2e6b4f; --green-bg:rgba(46,107,79,0.09);
+  --c0:#cdd5de; --c1:#8fa8c0; --c2:#5a82a0; --c3:#c9a84c; --c4:#2e6b4f; --c5:#1a2b4a;
+}
+
+body {
+  background: var(--white);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px; /* ↑ base font up from 12.5 */
+}
+
+.page { max-width: 1380px; margin: 0 auto; padding: 36px 48px 96px; }
+
+/* ── HEADER ── */
+.header { display:flex; align-items:center; justify-content:space-between; padding-bottom:20px; border-bottom:2.5px solid var(--navy); gap:20px; }
+.header-left { display:flex; align-items:center; gap:16px; }
+.header-logo { flex-shrink:0; width:46px; height:46px; }
+.header-text h1 { font-size:22px; font-weight:700; color:var(--navy); letter-spacing:-0.02em; line-height:1.2; }
+.header-text .sub { font-size:11px; font-weight:400; color:var(--text-dim); letter-spacing:0.09em; text-transform:uppercase; margin-top:3px; }
+.header-right { display:flex; align-items:center; gap:14px; }
+.header-date { font-size:11px; color:var(--text-dim); letter-spacing:0.07em; text-transform:uppercase; }
+
+/* ── SAVE BTN ── */
+.save-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--navy); color:#fff; border:none; border-radius:5px;
+  cursor:pointer; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+  letter-spacing:0.04em; padding:10px 20px;
+  transition:background 0.15s, transform 0.1s; white-space:nowrap;
+}
+.save-btn:hover { background:#253d68; }
+.save-btn:active { transform:scale(0.97); }
+.save-btn.saved { background:var(--green) !important; }
+
+/* ── STAGE KEY ── */
+.stage-key-bar { display:flex; align-items:stretch; border-bottom:1px solid var(--rule); background:var(--bg); margin-top:0; }
+.key-label { font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim); padding:12px 18px; border-right:1px solid var(--rule); display:flex; align-items:center; white-space:nowrap; flex-shrink:0; }
+.key-stages { display:flex; flex:1; }
+.key-stage { flex:1; display:flex; align-items:center; gap:10px; padding:11px 14px; border-right:1px solid var(--rule); }
+.key-stage:last-child { border-right:none; }
+.key-swatch { width:32px; height:7px; border-radius:3px; flex-shrink:0; }
+.key-text { line-height:1.35; }
+.key-num { font-size:11px; font-weight:700; color:var(--text); display:block; }
+.key-desc { font-size:9.5px; color:var(--text-dim); display:block; white-space:nowrap; }
+
+/* ── EDIT HINT ── */
+.edit-hint { background:linear-gradient(135deg,#f5edd8 0%,#fdf9f2 100%); border:1px solid rgba(201,168,76,0.3); border-radius:5px; padding:10px 16px; margin-top:16px; display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--gold-text); }
+.edit-hint svg { flex-shrink:0; }
+
+/* ── SECTION ── */
+.section { margin-top:24px; }
+.section-head { display:flex; align-items:center; gap:12px; margin-bottom:9px; }
+.section-tag { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:4px 13px; border-radius:3px; }
+.section-tag.dollars { background:var(--gold); color:#fff; }
+.section-tag.deals   { background:var(--navy); color:#fff; }
+.section-desc { font-size:12px; font-style:italic; color:var(--text-dim); }
+
+/* ── TABLE ── */
+.tbl { width:100%; border-collapse:collapse; border:1px solid var(--rule); }
+.tbl thead tr { background:var(--navy); }
+.tbl thead th {
+  padding:9px 13px; font-size:9px; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:rgba(255,255,255,0.5); text-align:left;
+  border-right:1px solid rgba(255,255,255,0.07); white-space:nowrap;
+}
+.tbl thead th:last-child { border-right:none; }
+.tbl thead th.th-center { text-align:center; }
+.tbl thead th.th-gold { color:rgba(201,168,76,0.95); }
+
+.tbl tbody tr { border-bottom:1px solid var(--rule-lt); }
+.tbl tbody tr:last-child { border-bottom:none; }
+.tbl tbody tr:nth-child(even) td { background:var(--bg); }
+.tbl tbody tr:hover td { background:#f2ece0 !important; }
+.tbl tbody tr.live-row td { background:rgba(46,107,79,0.05) !important; }
+.tbl tbody tr.live-row:hover td { background:#edf5ef !important; }
+
+.tbl td { padding:13px 13px; vertical-align:middle; border-right:1px solid var(--rule-lt); }
+.tbl td:last-child { border-right:none; }
+.tbl tr.live-row td:first-child { border-left:4px solid var(--green); padding-left:10px; }
+
+/* col widths */
+.col-biz   { width:195px; }
+.col-prod  { width:190px; }
+.col-strat { width:155px; }
+.col-notes { width:175px; }
+
+/* ── CELL CONTENT ── */
+.biz-name { font-weight:600; font-size:13px; color:var(--navy); line-height:1.35; }
+.biz-sub  { font-size:11px; color:var(--text-dim); margin-top:2px; line-height:1.35; }
+
+/* editable product name */
+.prod-name {
+  font-weight:700; font-size:13.5px; color:var(--navy);
+  line-height:1.35; letter-spacing:-0.01em;
+  border:1px solid transparent; border-radius:3px;
+  padding:1px 4px; margin:-1px -4px;
+  cursor:text; outline:none; display:block; width:100%;
+  transition:border-color 0.12s, background 0.12s;
+}
+.prod-name:hover { border-color:var(--rule); background:var(--bg); }
+.prod-name:focus { border-color:var(--gold); background:#fffdf7; box-shadow:0 0 0 3px rgba(201,168,76,0.15); }
+
+.prod-badge {
+  display:inline-flex; align-items:center; margin-top:4px;
+  font-size:9.5px; font-weight:600; letter-spacing:0.04em;
+  text-transform:uppercase; padding:3px 8px; border-radius:3px; gap:4px;
+}
+.pb-future { background:var(--gold-dim); color:var(--gold-text); }
+.pb-open   { background:rgba(26,43,74,0.07); color:var(--navy); }
+.pb-closed { background:#ede9e2; color:var(--text-dim); }
+
+.strat-text { font-size:11.5px; color:var(--text-mid); line-height:1.6; font-style:italic; }
+
+/* ── TRACK SVG – taller ── */
+.track-wrap { padding:4px 0; }
+.track-svg {
+  display:block; width:100%; height:58px; /* ↑ up from 36px */
+  cursor:pointer; transition:opacity 0.12s;
+}
+.track-svg:hover { opacity:0.87; }
+
+/* ── EDITABLE NOTES ── */
+.notes-edit {
+  font-size:11.5px; line-height:1.55; width:100%;
+  min-height:32px; resize:none; overflow:hidden;
+  border:1px solid transparent; border-radius:3px;
+  padding:3px 5px; margin:-3px -5px;
+  background:transparent; font-family:'Inter',sans-serif;
+  cursor:text; outline:none; display:block;
+  transition:border-color 0.12s, background 0.12s;
+  color:var(--text-dim);
+}
+.notes-edit:hover { border-color:var(--rule); background:var(--bg); }
+.notes-edit:focus { border-color:var(--gold); background:#fffdf7; box-shadow:0 0 0 3px rgba(201,168,76,0.15); color:var(--text); }
+.notes-edit.is-placeholder { color:var(--text-dim); font-style:italic; opacity:0.55; }
+
+/* ── STAGE PICKER ── */
+.stage-picker {
+  display:none; position:fixed; z-index:9999; background:white;
+  border:1px solid var(--rule); border-radius:8px;
+  box-shadow:0 10px 40px rgba(26,43,74,0.18), 0 2px 10px rgba(0,0,0,0.07);
+  padding:14px; min-width:290px;
+}
+.stage-picker.open { display:block; }
+.stage-picker-title { font-size:9.5px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); margin-bottom:7px; padding-bottom:7px; border-bottom:1px solid var(--rule-lt); }
+.stage-picker-prod { font-size:12px; font-weight:600; color:var(--navy); margin-bottom:11px; line-height:1.4; }
+.stage-options { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.stage-opt { display:flex; flex-direction:column; align-items:center; padding:10px 6px; border-radius:5px; cursor:pointer; border:2px solid transparent; transition:all 0.12s; background:var(--bg); }
+.stage-opt:hover { border-color:var(--gold); background:var(--gold-dim); }
+.stage-opt.active { border-color:var(--navy); background:rgba(26,43,74,0.05); }
+.stage-opt-num { font-size:19px; font-weight:700; line-height:1; margin-bottom:4px; }
+.stage-opt-label { font-size:8px; text-align:center; line-height:1.35; color:var(--text-mid); font-weight:500; }
+.picker-close { position:absolute; top:12px; right:13px; font-size:16px; color:var(--text-dim); cursor:pointer; background:none; border:none; }
+.picker-close:hover { color:var(--navy); }
+
+#overlay { display:none; position:fixed; inset:0; z-index:9998; }
+#overlay.open { display:block; }
+
+/* ── STICKY SAVE BAR ── */
+.save-bar {
+  position:fixed; bottom:0; left:0; right:0; background:white;
+  border-top:1px solid var(--rule); padding:12px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  z-index:100; box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+}
+.save-bar-hint { font-size:11px; color:var(--text-dim); }
+.save-bar-hint strong { color:var(--text-mid); }
+
+.watermark { margin-top:16px; display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); padding-top:12px; border-top:1px solid var(--rule-lt); }
+</style>
+</head>
+<body>
+
+<div id="overlay"></div>
+<div class="stage-picker" id="stagePicker">
+  <button class="picker-close" id="pickerClose">✕</button>
+  <div class="stage-picker-title">Set Engagement Stage</div>
+  <div class="stage-picker-prod" id="pickerProdName"></div>
+  <div class="stage-options" id="stageOptions"></div>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <svg class="header-logo" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="46" height="46" fill="#1a2b4a" rx="4"/>
+        <polyline points="5,37 14,19 22,26 30,15 41,37" fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <polygon points="30,6.5 31.3,10.5 35.6,10.5 32.2,13.1 33.5,17.1 30,14.5 26.5,17.1 27.8,13.1 24.4,10.5 28.7,10.5" fill="#c9a84c"/>
+      </svg>
+      <div class="header-text">
+        <h1>PNC × Star Mountain Capital &nbsp;·&nbsp; Stage Map</h1>
+        <div class="sub">Callan Engagement Chart — Where Are We?</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-date">February 2026</span>
+      <button class="save-btn" id="saveBtnTop" onclick="saveFile()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 2h9l3 3v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="2" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        Save &amp; Download
+      </button>
+    </div>
+  </div>
+
+  <!-- STAGE KEY -->
+  <div class="stage-key-bar">
+    <div class="key-label">Stage Key</div>
+    <div class="key-stages">
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c0)"></div><div class="key-text"><span class="key-num">Stage 0</span><span class="key-desc">Not yet engaged</span></div></div>
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c1)"></div><div class="key-text"><span class="key-num">Stage 1</span><span class="key-desc">First contact / intro</span></div></div>
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c2)"></div><div class="key-text"><span class="key-num">Stage 2</span><span class="key-desc">Active dialogue / diligence</span></div></div>
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c3)"></div><div class="key-text"><span class="key-num">Stage 3</span><span class="key-desc">Proposal / term sheet</span></div></div>
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c4)"></div><div class="key-text"><span class="key-num">Stage 4</span><span class="key-desc">Approved / pilot</span></div></div>
+      <div class="key-stage"><div class="key-swatch" style="background:var(--c5)"></div><div class="key-text"><span class="key-num">Stage 5</span><span class="key-desc">Strategic partner / recurring</span></div></div>
+    </div>
+  </div>
+
+  <!-- EDIT HINT -->
+  <div class="edit-hint">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" stroke="#7a5e1a" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    <span><strong>Click any track bar</strong> to change engagement stage &nbsp;·&nbsp; <strong>Click a product name or notes</strong> to edit &nbsp;·&nbsp; <strong>Save &amp; Download</strong> to keep changes</span>
+  </div>
+
+  <!-- DOLLARS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag dollars">$ &nbsp;Dollars</span>
+      <span class="section-desc">Capital Syndication &amp; Fund Platform Channels</span>
+    </div>
+    <table class="tbl">
+      <thead><tr>
+        <th class="col-biz">Business Line</th>
+        <th class="col-prod">Product</th>
+        <th class="col-strat">Strategy / LOB</th>
+        <th class="col-track th-center th-gold">Engagement Stage →</th>
+        <th class="col-notes">Notes</th>
+      </tr></thead>
+      <tbody id="tbody-dollars"></tbody>
+    </table>
+  </div>
+
+  <!-- DEALS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag deals">⚡ Deals</span>
+      <span class="section-desc">Deal Flow &amp; Co-Investment Channels</span>
+    </div>
+    <table class="tbl">
+      <thead><tr>
+        <th class="col-biz">Business Line</th>
+        <th class="col-prod">Product</th>
+        <th class="col-strat">Strategy / LOB</th>
+        <th class="col-track th-center th-gold">Engagement Stage →</th>
+        <th class="col-notes">Notes</th>
+      </tr></thead>
+      <tbody id="tbody-deals"></tbody>
+    </table>
+  </div>
+
+  <div class="watermark">
+    <span>Star Mountain Capital — Confidential &amp; Proprietary</span>
+    <span>PNC Engagement Tracker · February 2026</span>
+  </div>
+</div>
+
+<!-- STICKY SAVE BAR -->
+<div class="save-bar">
+  <span class="save-bar-hint"><strong>Tip:</strong> Edit stages, product names &amp; notes above. <strong>Save &amp; Download</strong> → upload to GitHub to publish.</span>
+  <button class="save-btn" id="saveBtnBar" onclick="saveFile()">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 2h9l3 3v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="2" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.5"/></svg>
+    Save &amp; Download
+  </button>
+</div>
+
+<script>
+const SC=['#cdd5de','#8fa8c0','#5a82a0','#c9a84c','#2e6b4f','#1a2b4a'];
+const SL=['Stage 0','Stage 1','Stage 2','Stage 3','Stage 4','Stage 5'];
+const SD=['Not yet engaged','First contact / intro','Active dialogue','Proposal / term sheet','Approved / pilot','Strategic partner'];
+const PLACEHOLDER='No notes';
+
+// ── DATA (rebuilt on Save) ───────────────────────────────────
+const ROWS_DOLLARS = [
+  { id:"pnc_cfv",    biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Credit Fund V",                          prodBadge:"pb-open",   prodBadgeText:"● Open · Direct Lending",          strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:4, notes:"Live Engagement" },
+  { id:"pnc_bdc",    biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"BDC (Private BDC)",                      prodBadge:"pb-open",   prodBadgeText:"● Open · Direct Lending",          strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:1, notes:"Live Engagement" },
+  { id:"pnc_cfvi",   biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Credit Fund VI",                         prodBadge:"pb-future", prodBadgeText:"◆ Future · Direct Lending",        strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:1, notes:"Live Engagement" },
+  { id:"pnc_sf3",    biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Secondary Fund III",                     prodBadge:"pb-open",   prodBadgeText:"● Open · Secondaries",             strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:1, notes:"" },
+  { id:"pnc_pf4",    biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Partners Fund IV",                       prodBadge:"pb-open",   prodBadgeText:"● Open · Partners Funds",          strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:5, notes:"Passive" },
+  { id:"pnc_sbic2",  biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"SBIC Fund II",                           prodBadge:"pb-open",   prodBadgeText:"● Open · Direct Lending",          strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:5, notes:"Passive" },
+  { id:"pnc_agility",biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Agility Fund",                           prodBadge:"pb-open",   prodBadgeText:"● Open · Secondaries (Evergreen)", strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:0, notes:"" },
+  { id:"pnc_idf",    biz:"PNC Private Bank & Hawthorn",        bizSub:"UHNW / Multi-Family Office",          product:"Insurance Dedicated Fund",               prodBadge:"pb-open",   prodBadgeText:"● Open · Fund of Funds",           strategy:"Syndicate capital through HNW & ultra-affluent client channels", stage:0, notes:"Hawthorn Business Owner practice — liquidity event planning" },
+  { id:"iam_cfo",    biz:"PNC Institutional Asset Mgmt (IAM)", bizSub:"PNC Capital Advisors — SEC RIA",      product:"Collateralized Fund Obligation",          prodBadge:"pb-open",   prodBadgeText:"● Open · Direct Lending",          strategy:"Managed account & fund platform access via SEC-registered RIA",  stage:0, notes:"" },
+  { id:"iam_epc",    biz:"PNC Institutional Asset Mgmt (IAM)", bizSub:"PNC Capital Advisors — SEC RIA",      product:"Evergreen Private Credit Fund",          prodBadge:"pb-open",   prodBadgeText:"● Open · Direct Lending",          strategy:"Managed account & fund platform access via SEC-registered RIA",  stage:0, notes:"" },
+  { id:"iam_sma",    biz:"PNC Institutional Asset Mgmt (IAM)", bizSub:"PNC Capital Advisors — SEC RIA",      product:"Credit-Focused SMA",                     prodBadge:"pb-future", prodBadgeText:"◆ Future · Direct Lending",        strategy:"Managed account & fund platform access via SEC-registered RIA",  stage:0, notes:"" },
+];
+
+const ROWS_DEALS = [
+  { id:"dcm_main", biz:"PNC Capital Markets LLC",              bizSub:"Debt Capital Markets & Loan Syndications", product:"Direct Co-Investment / Lending Pipeline", prodBadge:"pb-open", prodBadgeText:"● Active Channel", strategy:"Co-investment & direct lending from DCM origination pipeline",    stage:5, notes:"Top 5 middle-market syndicator — 5 consecutive years" },
+  { id:"hw_ma",    biz:"Harris Williams & Co.",                bizSub:"M&A Advisory — PNC Subsidiary",       product:"M&A Deal Flow Pipeline",                 prodBadge:"pb-open",   prodBadgeText:"● Active Channel",                 strategy:"Proprietary deal flow — industrials, healthcare, tech & consumer",stage:0, notes:"" },
+  { id:"sol_ecm",  biz:"Solebury Capital",                     bizSub:"ECM Advisory — PNC Subsidiary",       product:"IPO / Equity Follow-On Pipeline",        prodBadge:"pb-open",   prodBadgeText:"● Active Channel",                 strategy:"IPO pipeline & equity follow-on transaction deal flow",          stage:0, notes:"300+ ECM transactions" },
+  { id:"mezz_co",  biz:"PNC Mezzanine, Erieview & Riverarch",  bizSub:"Mezzanine Capital & Equity Partners", product:"Mezzanine / Junior Capital Co-Investment",prodBadge:"pb-open",   prodBadgeText:"● Active Channel",                 strategy:"Co-invest alongside mezzanine & junior capital placements",      stage:0, notes:"$10M–$40M per transaction; can lead up to $60M" },
+  { id:"fig_pl",   biz:"Corp. & Institutional Banking — FIG",  bizSub:"Financial Institutions Group",        product:"Private Placement Advisory",             prodBadge:"pb-open",   prodBadgeText:"● Active Channel",                 strategy:"Capital raises & private placements advisory",                  stage:0, notes:"Under PNC Capital Markets" },
+];
+
+// ── TRACK DRAWING ────────────────────────────────────────────
+// Larger viewBox to give more room for the skater
+const VW=520, VH=58, N=6, GAP=6;
+const TY=22, TH=14, TR=7;   // track bar: taller, positioned lower to give skater room above
+const ZONE_W=(VW-GAP*(N-1))/N;
+const zx=i=>i*(ZONE_W+GAP);
+const zcx=i=>zx(i)+ZONE_W/2;
+
+function skater(px, py, color) {
+  // Significantly larger & more visible skater
+  const s = 1.7;  // was 0.9 — nearly 2× bigger
+  const p = [];
+
+  // Shadow under blades
+  p.push(`<ellipse cx="${px+1}" cy="${py+6*s}" rx="${8*s}" ry="${2*s}" fill="rgba(0,0,0,0.10)"/>`);
+
+  // Blade (longer, bolder)
+  p.push(`<line x1="${px-6*s}" y1="${py+5.5*s}" x2="${px+8.5*s}" y2="${py+5.5*s}" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.95"/>`);
+
+  // Legs
+  p.push(`<line x1="${px}" y1="${py+0.5*s}" x2="${px-5*s}" y2="${py+5.5*s}" stroke="${color}" stroke-width="2.6" stroke-linecap="round"/>`);
+  p.push(`<line x1="${px}" y1="${py+0.5*s}" x2="${px+4*s}" y2="${py+5.5*s}" stroke="${color}" stroke-width="2.6" stroke-linecap="round"/>`);
+
+  // Torso (leaning forward)
+  p.push(`<line x1="${px+2*s}" y1="${py-7.5*s}" x2="${px}" y2="${py+0.5*s}" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`);
+
+  // Head (solid filled circle — visible)
+  p.push(`<circle cx="${px+3*s}" cy="${py-10.5*s}" r="${3.2*s}" fill="${color}"/>`);
+  // Helmet highlight
+  p.push(`<circle cx="${px+3*s}" cy="${py-10.5*s}" r="${3.2*s}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>`);
+
+  // Helmet stripe (gold accent)
+  p.push(`<path d="M${px+0.5*s},${py-13*s} Q${px+3*s},${py-15*s} ${px+5.5*s},${py-12.5*s}" stroke="#c9a84c" stroke-width="1.6" fill="none" stroke-linecap="round"/>`);
+
+  // Arms
+  p.push(`<line x1="${px+1.5*s}" y1="${py-5*s}" x2="${px-5*s}" y2="${py-2.5*s}" stroke="${color}" stroke-width="2.2" stroke-linecap="round"/>`);
+  p.push(`<line x1="${px+1.5*s}" y1="${py-5*s}" x2="${px+8*s}" y2="${py-3*s}" stroke="${color}" stroke-width="2.2" stroke-linecap="round"/>`);
+
+  // Speed lines (more visible)
+  if (true) {
+    const lx = px - 6*s;
+    p.push(`<line x1="${lx-14}" y1="${py-1}" x2="${lx}" y2="${py-1}" stroke="${color}" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>`);
+    p.push(`<line x1="${lx-10}" y1="${py+3}" x2="${lx}" y2="${py+3}" stroke="${color}" stroke-width="1" stroke-linecap="round" opacity="0.35"/>`);
+    p.push(`<line x1="${lx-7}"  y1="${py+7}" x2="${lx}" y2="${py+7}" stroke="${color}" stroke-width="0.8" stroke-linecap="round" opacity="0.25"/>`);
+  }
+
+  return p.join('');
+}
+
+function buildTrack(stage) {
+  const color = SC[stage], o = [];
+
+  // Base rail
+  o.push(`<rect x="0" y="${TY}" width="${VW}" height="${TH}" rx="${TR}" fill="#e0dbd2"/>`);
+
+  // Progress fill for completed stages
+  if (stage > 0) {
+    o.push(`<rect x="0" y="${TY}" width="${zx(stage)}" height="${TH}" rx="${TR}" fill="#c4ccd6" opacity="0.6"/>`);
+  }
+
+  // Active zone highlight
+  const ax = zx(stage);
+  const isF = stage===0, isL = stage===N-1;
+  o.push(`<rect x="${ax}" y="${TY}" width="${ZONE_W}" height="${TH}" rx="${isF||isL?TR:3}" fill="${color}"/>`);
+  // Sheen
+  o.push(`<rect x="${ax}" y="${TY}" width="${ZONE_W}" height="4" rx="${isF?TR:2}" fill="rgba(255,255,255,0.22)"/>`);
+
+  // Dividers between zones
+  for (let i=1; i<N; i++) {
+    const dx = zx(i) - GAP/2 - 0.5;
+    o.push(`<line x1="${dx}" y1="${TY+2}" x2="${dx}" y2="${TY+TH-2}" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>`);
+  }
+
+  // Stage labels below bar
+  for (let i=0; i<N; i++) {
+    const lx = zcx(i);
+    const isActive = i===stage;
+    o.push(`<text x="${lx}" y="${VH-2}" text-anchor="middle" fill="${isActive?color:'#b0bbc8'}" font-family="Inter,sans-serif" font-size="8.5" font-weight="${isActive?'700':'400'}" letter-spacing="0.2">${SL[i]}</text>`);
+  }
+
+  // Finish line at Stage 5
+  if (stage===N-1) {
+    o.push(`<line x1="${VW-4}" y1="${TY-2}" x2="${VW-4}" y2="${TY+TH+2}" stroke="${color}" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.6"/>`);
+  }
+
+  // Skater — centered in active zone, sitting just above the bar
+  const sx = zcx(stage);
+  const sy = TY - 2;   // place feet just above bar top
+  o.push(skater(sx, sy, color));
+
+  return o.join('');
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+const isLive = s => s >= 3;
+
+function renderRow(row) {
+  const isP = !row.notes;
+  return `<tr class="${isLive(row.stage)?'live-row':''}" id="tr-${row.id}">
+    <td class="col-biz">
+      <div class="biz-name">${row.biz}</div>
+      <div class="biz-sub">${row.bizSub}</div>
+    </td>
+    <td class="col-prod">
+      <div class="prod-name" contenteditable="true" data-id="${row.id}" spellcheck="false">${row.product}</div>
+      <span class="prod-badge ${row.prodBadge}">${row.prodBadgeText}</span>
+    </td>
+    <td class="col-strat"><div class="strat-text">${row.strategy}</div></td>
+    <td class="col-track">
+      <div class="track-wrap">
+        <svg class="track-svg" id="svg-${row.id}" viewBox="0 0 520 58" preserveAspectRatio="none" data-id="${row.id}" title="Click to change stage"></svg>
+      </div>
+    </td>
+    <td class="col-notes">
+      <textarea class="notes-edit${isP?' is-placeholder':''}" data-id="${row.id}" rows="1">${isP?PLACEHOLDER:row.notes}</textarea>
+    </td>
+  </tr>`;
+}
+
+function renderAll() {
+  document.getElementById('tbody-dollars').innerHTML = ROWS_DOLLARS.map(renderRow).join('');
+  document.getElementById('tbody-deals').innerHTML   = ROWS_DEALS.map(renderRow).join('');
+  allRows().forEach(r => {
+    const el = document.getElementById('svg-'+r.id);
+    if (el) el.innerHTML = buildTrack(r.stage);
+  });
+  attachEvents();
+}
+
+// ── EVENTS ───────────────────────────────────────────────────
+function allRows() { return [...ROWS_DOLLARS, ...ROWS_DEALS]; }
+
+function attachEvents() {
+  document.querySelectorAll('.track-svg').forEach(el => {
+    el.addEventListener('click', () => openPicker(el.dataset.id, el));
+  });
+
+  document.querySelectorAll('.prod-name[contenteditable]').forEach(el => {
+    el.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();el.blur();} });
+    el.addEventListener('blur', () => {
+      const r = allRows().find(x=>x.id===el.dataset.id);
+      if(r) { r.product=el.textContent.trim()||r.product; el.textContent=r.product; }
+    });
+  });
+
+  document.querySelectorAll('.notes-edit').forEach(ta => {
+    autoResize(ta);
+    ta.addEventListener('focus', () => {
+      if(ta.classList.contains('is-placeholder')) { ta.value=''; ta.classList.remove('is-placeholder'); }
+      autoResize(ta);
+    });
+    ta.addEventListener('input', () => {
+      const r = allRows().find(x=>x.id===ta.dataset.id);
+      if(r) r.notes = ta.value;
+      autoResize(ta);
+    });
+    ta.addEventListener('blur', () => {
+      const val = ta.value.trim();
+      const r = allRows().find(x=>x.id===ta.dataset.id);
+      if(!val) {
+        ta.value=PLACEHOLDER; ta.classList.add('is-placeholder');
+        if(r) r.notes='';
+      } else {
+        ta.classList.remove('is-placeholder');
+        if(r) r.notes=val;
+      }
+      autoResize(ta);
+    });
+  });
+}
+
+function autoResize(ta) { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+
+// ── STAGE PICKER ─────────────────────────────────────────────
+const picker  = document.getElementById('stagePicker');
+const overlay = document.getElementById('overlay');
+
+function openPicker(id, el) {
+  const r = allRows().find(x=>x.id===id);
+  document.getElementById('pickerProdName').textContent = r.product + ' — ' + r.biz;
+  const opts = document.getElementById('stageOptions');
+  opts.innerHTML = '';
+  for(let i=0; i<6; i++){
+    const d = document.createElement('div');
+    d.className = 'stage-opt'+(i===r.stage?' active':'');
+    d.innerHTML = `<span class="stage-opt-num" style="color:${SC[i]}">${i}</span><span class="stage-opt-label">${SD[i]}</span>`;
+    d.addEventListener('click', ()=>setStage(id, i));
+    opts.appendChild(d);
+  }
+  const rect = el.getBoundingClientRect();
+  picker.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
+  picker.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 308) + 'px';
+  picker.classList.add('open');
+  overlay.classList.add('open');
+}
+
+function closePicker() {
+  picker.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
+function setStage(id, stage) {
+  const r = allRows().find(x=>x.id===id); if(!r) return;
+  r.stage = stage;
+  const s = document.getElementById('svg-'+id); if(s) s.innerHTML = buildTrack(stage);
+  const tr = document.getElementById('tr-'+id);
+  if(tr) { isLive(stage) ? tr.classList.add('live-row') : tr.classList.remove('live-row'); }
+  closePicker();
+}
+
+document.getElementById('pickerClose').addEventListener('click', closePicker);
+overlay.addEventListener('click', closePicker);
+
+// ── SAVE ─────────────────────────────────────────────────────
+function saveFile() {
+  document.querySelectorAll('.prod-name[contenteditable]').forEach(el => {
+    const r=allRows().find(x=>x.id===el.dataset.id); if(r) r.product=el.textContent.trim()||r.product;
+  });
+  document.querySelectorAll('.notes-edit').forEach(ta => {
+    const r=allRows().find(x=>x.id===ta.dataset.id);
+    if(r) r.notes = ta.classList.contains('is-placeholder') ? '' : ta.value.trim();
+  });
+
+  const J = v => JSON.stringify(v);
+  const ser = rows => rows.map(r =>
+    `  { id:${J(r.id)}, biz:${J(r.biz)}, bizSub:${J(r.bizSub)}, product:${J(r.product)}, prodBadge:${J(r.prodBadge)}, prodBadgeText:${J(r.prodBadgeText)}, strategy:${J(r.strategy)}, stage:${r.stage}, notes:${J(r.notes)} }`
+  ).join(',\n');
+
+  const d0 = `const ROWS_DOLLARS = [\n${ser(ROWS_DOLLARS)},\n];`;
+  const d1 = `const ROWS_DEALS = [\n${ser(ROWS_DEALS)},\n];`;
+
+  let html = document.documentElement.outerHTML;
+  html = html.replace(/const ROWS_DOLLARS = \[[\s\S]*?\];/, d0);
+  html = html.replace(/const ROWS_DEALS = \[[\s\S]*?\];/, d1);
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['<!DOCTYPE html>\n'+html], {type:'text/html'}));
+  a.download = 'pnc-callan-stage-map-editable.html';
+  a.click(); URL.revokeObjectURL(a.href);
+
+  const btns = [document.getElementById('saveBtnTop'), document.getElementById('saveBtnBar')];
+  btns.forEach(b => { b.classList.add('saved'); b.textContent = '✓  Saved!'; });
+  setTimeout(() => btns.forEach(b => {
+    b.classList.remove('saved');
+    b.innerHTML = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 2h9l3 3v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="2" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.5"/></svg> Save &amp; Download';
+  }), 2500);
+}
+
+renderAll();
+</script>
+</body>
+</html>
